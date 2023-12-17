@@ -2,13 +2,13 @@ String oAuthAccessToken;
 
 bool refreshAuth(void *) {
   DynamicJsonDocument postData(2048);
-  postData["username"] = "admin";
-  postData["password"] = "admin";
+  postData["username"] = HOMEBRIDGE_API_USERNAME;
+  postData["password"] = HOMEBRIDGE_API_PASSWORD;
 
   String json;
   serializeJson(postData, json);
 
-  http.begin(client, "http://basement:8581/api/auth/login");
+  http.begin(client, String(HOMEBRIDGE_API_HOST) + "/api/auth/login");
   http.addHeader("Content-Type", "application/json");
 
   
@@ -42,7 +42,7 @@ bool refreshAccessories(void *) {
 }
 
 bool getAccessory(String uniqueId) {
-  http.begin(client, "http://basement:8581/api/accessories/" + uniqueId);
+  http.begin(client, String(HOMEBRIDGE_API_HOST) + "/api/accessories/" + uniqueId);
   http.addHeader("Authorization", "Bearer " + oAuthAccessToken);
   http.GET();
 
@@ -57,17 +57,16 @@ bool getAccessory(String uniqueId) {
 }
 
 void toggleAccessory(String uniqueId, bool state) {
-  DynamicJsonDocument putData(2048);
+  DynamicJsonDocument putData(1024);
   putData["characteristicType"] = "On";
   putData["value"] = state ? 1 : 0;
 
   String json;
   serializeJson(putData, json);
   
-  http.begin(client, "http://basement:8581/api/accessories/" + uniqueId);
+  http.begin(client, String(HOMEBRIDGE_API_HOST) + "/api/accessories/" + uniqueId);
   http.addHeader("Content-Type", "application/json");
   http.addHeader("Authorization", "Bearer " + oAuthAccessToken);
   http.PUT(json);
-
   http.end();
 }

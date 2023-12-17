@@ -10,24 +10,19 @@
 
 auto timer = timer_create_default();
 bool accessoryState[NUM_BUTTONS] = {
-  false,
-  false,
-  false
+  true,
+  true,
+  true
 };
 
 String accessoryIds[NUM_BUTTONS] = {
   "e4758a7f3f0cb83faefb6c57319bc45e3bc29e6d60342efd153876288e4d8fcf", // Tischlampe
   "418aa0aea81ff0a40ee86b991089e31a9bac42c6d143c121902ce185a17220a1", // Stehlampe
-  "814a3beda76aa79af3ca0d2bfc382827120a09a41d3a29987862a0b2ba32e0b3" // LED Wall
+  "814a3beda76aa79af3ca0d2bfc382827120a09a41d3a29987862a0b2ba32e0b3"  // LED Wall
 };
 
-int buttonPin[NUM_BUTTONS] = {
-  D5, D6, D7
-};
-
-int ledPin[NUM_BUTTONS] = {
-  D1, D2, D3
-};
+int buttonPin[NUM_BUTTONS] = { D5, D6, D7 };
+int ledPin[NUM_BUTTONS] = { D1, D2, D3 };
 
 
 HTTPClient http;
@@ -67,9 +62,10 @@ void setup() {
 
   setupArduinoOTA();
 
-  timer.in(2000, refreshAuth);
-  timer.every(28800000, refreshAuth);
-  timer.every(2500, refreshAccessories);
+  timer.in(100, refreshAuth);            // Initial Authentication
+  timer.in(1500, refreshAccessories);    // Get initial state of all buttons
+  timer.every(28800000, refreshAuth);    // Refresh Auth in certain intervals
+  timer.every(5000, refreshAccessories); // Refresh the state of all buttons periodically
 }
 
 void loop() {
@@ -80,11 +76,12 @@ void loop() {
     digitalWrite(ledPin[i], accessoryState[i] ? HIGH : LOW);
   }
 
-  for (int i = 0; i < 1; i++) {
+  for (int i = 0; i < NUM_BUTTONS; i++) {
     if (digitalRead(buttonPin[i]) == HIGH) {
        toggleAccessory(accessoryIds[i], !accessoryState[i]);
-       digitalWrite(ledPin[i], !accessoryState[i] ? HIGH : LOW);
-       delay(1000);
+       accessoryState[i] = !accessoryState[i];
+       digitalWrite(ledPin[i], accessoryState[i] ? HIGH : LOW);
+       delay(500);
     }
   }
 }
