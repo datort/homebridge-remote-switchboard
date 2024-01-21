@@ -16,9 +16,9 @@ bool accessoryState[NUM_BUTTONS] = {
 };
 
 String accessoryIds[NUM_BUTTONS] = {
-  "e4758a7f3f0cb83faefb6c57319bc45e3bc29e6d60342efd153876288e4d8fcf", // Tischlampe
-  "418aa0aea81ff0a40ee86b991089e31a9bac42c6d143c121902ce185a17220a1", // Stehlampe
-  "814a3beda76aa79af3ca0d2bfc382827120a09a41d3a29987862a0b2ba32e0b3"  // LED Wall
+  "e4758a7f3...", // Accessory 1
+  "418aa0aea...", // Accessory 2
+  "814a3beda..."  // Accessory 3
 };
 
 int buttonPin[NUM_BUTTONS] = { D5, D6, D7 };
